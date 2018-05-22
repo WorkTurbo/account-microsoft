@@ -4,6 +4,9 @@ Package.describe({
     summary: 'Login using microsoft'
 })
 
+Npm.depends({
+  '@microsoft/microsoft-graph-client': '1.0.0'
+})
 Package.onUse(function(api) {
     api.versionsFrom('1.2.1');
     api.use('ecmascript');

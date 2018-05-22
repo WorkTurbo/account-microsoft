@@ -18,7 +18,12 @@ OAuth.registerService('microsoft', 2, null, function(query) {
       accessToken: OAuth.sealSecret(respData.access_token),
       email: me.mail,
       provider: respData.provider,
-      tokenData: respData,
+      tokenData: {
+        id_token: respData.id_token,
+        refresh_token: respData.refresh_token,
+        expires_at: new Date().getTime() + 1000*respData.expires_in,
+        scope:respData.scope
+      },
       name: me.displayName
     },
     options: {
