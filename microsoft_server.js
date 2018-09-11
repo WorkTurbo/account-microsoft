@@ -4,12 +4,14 @@ MicrosoftGraph = require('@microsoft/microsoft-graph-client')
 Microsoft = {};
 
 OAuth.registerService('microsoft', 2, null, function(query) {
-  var respData = getAccessToken(query);
+  var {office, graph} = getAccessToken(query);
+  var respData = graph
   var c = MicrosoftGraph.Client.init({
     authProvider: function(done) {
       return done(null, respData.access_token)
     }
   })
+  // FIXME: we could just read it from the jwt passed in id_token
   var me = Promise.await(c.api('/me').get())
 
   return {
@@ -22,7 +24,8 @@ OAuth.registerService('microsoft', 2, null, function(query) {
         id_token: respData.id_token,
         refresh_token: respData.refresh_token,
         expires_at: new Date().getTime() + 1000*respData.expires_in,
-        scope:respData.scope
+        scope:respData.scope,
+        office, graph
       },
       name: me.displayName
     },
@@ -61,14 +64,43 @@ var getAccessToken = function(query) {
 
   var response;
   try {
-    response = HTTP.post(
-      'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+    scopes = [
+      "openid",
+      "offline_access",
+      "profile",
+      "email",
+      //"https://graph.microsoft.com/Mail.Read",
+      "https://outlook.office.com/Mail.Read"
+    ]
+    response1 = HTTP.post(
+      'https://login.microsoftonline.com/common/oauth2/token',
       {
         headers: {
           Accept: 'application/json',
           'User-Agent': userAgent
         },
         params: {
+          //resource: 'https://getaptly.com/c72f8afd-6d3c-478d-9102-22b4dbf02d3e',
+          //scope: `${scopes.map(encodeURIComponent).join('+')}`,
+          resource: 'https://outlook.office.com',
+          code: query.code,
+          grant_type: 'authorization_code',
+          client_id: config.clientId,
+          client_secret: config.secret,
+          redirect_uri: config.redirect_uri
+        }
+      }
+    );
+    response = HTTP.post(
+      'https://login.microsoftonline.com/common/oauth2/token',
+      //'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': userAgent
+        },
+        params: {
+          resource: 'https://graph.microsoft.com',
           code: query.code,
           grant_type: 'authorization_code',
           client_id: config.clientId,
@@ -92,7 +124,7 @@ var getAccessToken = function(query) {
         response.data.reason
     );
   } else {
-    return response.data;
+    return {office: response1.data, graph: response.data};
   }
 };
 

@@ -32,12 +32,20 @@ Microsoft.requestCredential = function (options, credentialRequestCompleteCallba
   var loginStyle = OAuth._loginStyle('microsoft', {loginStyle:'popup', ...config}, options);
 
   var loginUrl =
-    'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
+    //`https://login.microsoftonline.com/common/oauth2/authorize?response_type=code&resource=https%3A%2F%2Foutlook.office.com&client_id=91204085-0ffc-43c9-a52b-3c4cdc1e94e5&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F_oauth%2Fmicrosoft`
+    'https://login.microsoftonline.com/common/oauth2/authorize' +
     '?client_id=' + config.clientId +
     '&response_type=code'+
-    '&scope=' + flatScope +
+    //'&scope=' + flatScope +
     '&redirect_uri=' + OAuth._redirectUri('microsoft', {loginStyle:'popup', ...config}) +
     '&state=' + OAuth._stateParam(loginStyle, credentialToken);
+  //var loginUrl =
+    //'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
+    //'?client_id=' + config.clientId +
+    //'&response_type=code'+
+    //'&scope=' + flatScope +
+    //'&redirect_uri=' + OAuth._redirectUri('microsoft', {loginStyle:'popup', ...config}) +
+    //'&state=' + OAuth._stateParam(loginStyle, credentialToken);
 
   OAuth.launchLogin({
     loginService: "microsoft",
