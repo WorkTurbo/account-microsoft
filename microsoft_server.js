@@ -64,33 +64,6 @@ var getAccessToken = function(query) {
 
   var response;
   try {
-    scopes = [
-      "openid",
-      "offline_access",
-      "profile",
-      "email",
-      //"https://graph.microsoft.com/Mail.Read",
-      "https://outlook.office.com/Mail.Read"
-    ]
-    response1 = HTTP.post(
-      'https://login.microsoftonline.com/common/oauth2/token',
-      {
-        headers: {
-          Accept: 'application/json',
-          'User-Agent': userAgent
-        },
-        params: {
-          //resource: 'https://getaptly.com/c72f8afd-6d3c-478d-9102-22b4dbf02d3e',
-          //scope: `${scopes.map(encodeURIComponent).join('+')}`,
-          resource: 'https://outlook.office.com',
-          code: query.code,
-          grant_type: 'authorization_code',
-          client_id: config.clientId,
-          client_secret: config.secret,
-          redirect_uri: config.redirect_uri
-        }
-      }
-    );
     response = HTTP.post(
       'https://login.microsoftonline.com/common/oauth2/token',
       //'https://login.microsoftonline.com/common/oauth2/v2.0/token',
@@ -124,7 +97,7 @@ var getAccessToken = function(query) {
         response.data.reason
     );
   } else {
-    return {office: response1.data, graph: response.data};
+    return response.data
   }
 };
 
