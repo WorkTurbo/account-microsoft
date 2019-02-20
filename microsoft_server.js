@@ -4,8 +4,7 @@ MicrosoftGraph = require('@microsoft/microsoft-graph-client')
 Microsoft = {};
 
 OAuth.registerService('microsoft', 2, null, function(query) {
-  var {office, graph} = getAccessToken(query);
-  var respData = graph
+  var respData = getAccessToken(query);
   var c = MicrosoftGraph.Client.init({
     authProvider: function(done) {
       return done(null, respData.access_token)
@@ -25,7 +24,6 @@ OAuth.registerService('microsoft', 2, null, function(query) {
         refresh_token: respData.refresh_token,
         expires_at: new Date().getTime() + 1000*respData.expires_in,
         scope:respData.scope,
-        office, graph
       },
       name: me.displayName
     },
