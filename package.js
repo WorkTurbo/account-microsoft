@@ -8,7 +8,7 @@ Npm.depends({
   '@microsoft/microsoft-graph-client': '1.0.0'
 })
 Package.onUse(function(api) {
-    api.versionsFrom(['1.2.1', '2.3.1']);
+    api.versionsFrom(['2.5.6']);
     api.use('ecmascript');
     api.use('oauth2', ['client', 'server']);
     api.use('oauth', ['client', 'server']);
